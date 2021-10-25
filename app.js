@@ -8,6 +8,7 @@ app.use(express.static("public"));
 app.set('view engine', 'ejs');
 
 var items = ["Buy food", "Cook Food", "Eat Food"];
+var workItems = [];
 
 app.get("/", function(req, res) {
     var today = new Date();
@@ -22,15 +23,30 @@ app.get("/", function(req, res) {
 
     day = today.toLocaleDateString("en-CN", options);
 
-    res.render("list", { kindOfDay: day, newListItems: items });
+    res.render("list", { listTitle: day, newListItems: items });
 });
 
 app.post("/", function(req, res) {
+    //  console.log(req.body);
     var item = req.body.newItem;
-    if (item.trimStart() !== "") { items.push(item); }
+
+    if (req.body.list === "Work") {
+        if (item.trimStart() !== "") { workItems.push(item); }
+        res.redirect('/work');
+    } else {
+        if (item.trimStart() !== "") { items.push(item); }
+        res.redirect('/');
+    }
+
     // items.push(item);
-    res.redirect('/');
+
 });
+
+app.get("/work", function(req, res) {
+    res.render("list", { listTitle: "Work List", newListItems: workItems });
+});
+
+
 
 app.listen(3000, function() {
     console.log("Sever started on port 3000");
