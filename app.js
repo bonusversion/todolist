@@ -1,34 +1,28 @@
 const { response } = require("express");
 const express = require("express");
-const app = express();
+const date = require(__dirname + "/date.js");
 
+const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set('view engine', 'ejs');
 
-var items = ["Buy food", "Cook Food", "Eat Food"];
-var workItems = [];
+// console.log(date);
+
+const items = ["Buy food", "Cook Food", "Eat Food"];
+const workItems = [];
 
 app.get("/", function(req, res) {
-    var today = new Date();
-    var currentDay = today.getDay();
-    var day = "";
-
-    options = {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-    }
-
-    day = today.toLocaleDateString("en-CN", options);
+    // var currentDay = today.getDay();
+    const day = date.getDate();
 
     res.render("list", { listTitle: day, newListItems: items });
 });
 
 app.post("/", function(req, res) {
     //  console.log(req.body);
-    var item = req.body.newItem;
+    const item = req.body.newItem;
 
     if (req.body.list === "Work") {
         if (item.trimStart() !== "") { workItems.push(item); }
@@ -45,6 +39,10 @@ app.post("/", function(req, res) {
 app.get("/work", function(req, res) {
     res.render("list", { listTitle: "Work List", newListItems: workItems });
 });
+
+app.get("/about", function(req, res) {
+    res.render("about");
+})
 
 
 
