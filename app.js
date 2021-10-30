@@ -9,7 +9,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set('view engine', 'ejs');
 
-mongoose.connect("mongodb://localhost:27017/todolistDB", { useNewUrlParser: true });
+// mongoose.connect("mongodb://localhost:27017/todolistDB", { useNewUrlParser: true });
+mongoose.connect("mongodb://admin-bonus:199796@cluster0-shard-00-00.gkbnc.mongodb.net:27017,cluster0-shard-00-01.gkbnc.mongodb.net:27017,cluster0-shard-00-02.gkbnc.mongodb.net:27017/todolistDB?ssl=true&replicaSet=atlas-5qtmtj-shard-0&authSource=admin&retryWrites=true&w=majority", { useNewUrlParser: true });
 
 // console.log(date);
 const itemsSchema = new mongoose.Schema({
@@ -89,8 +90,9 @@ app.post("/", function(req, res) {
                     foundList.items.push(item);
                     foundList.save();
                     //List.updateOne({ name: listName }, { items: foundList.items }, function(err) {});
+                    res.redirect("/" + listName);
                 }
-                res.redirect("/" + listName);
+
             });
             //item.save();
         }
@@ -175,6 +177,11 @@ app.get("/about", function(req, res) {
     res.render("about");
 });
 
-app.listen(3000, function() {
+let port = process.env.PORT;
+if (port == null || port == "") {
+    port = 8000;
+}
+
+app.listen(port, function() {
     console.log("Sever started on port 3000");
 });
